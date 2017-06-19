@@ -21,14 +21,16 @@ cec_status() {
     STATUS=$(echo 'pow 0' | cec-client -s | grep 'power status:')
     OUTPUT="Transitioning"
 
-    if [[ $STATUS == *"on"* ]]; then
-      OUTPUT="On"
-    fi
-    if [[ $STATS == *"standby"* ]]; then
-      OUTPUT="Off"
-    fi
+    echo "Status = $STATUS"
 
-    mosquitto_pub -r -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$STATE_TOPIC" -m "$OUTPUT" || true
+    # if [[ $STATUS == *"on"* ]]; then
+    #   OUTPUT="On"
+    # fi
+    # if [[ $STATS == *"standby"* ]]; then
+    #   OUTPUT="Off"
+    # fi
+
+    # mosquitto_pub -r -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$STATE_TOPIC" -m "$OUTPUT" || true
 
     sleep 5
   done
