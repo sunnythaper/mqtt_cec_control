@@ -21,11 +21,11 @@ cec_status() {
     STATUS=$(echo 'pow 0' | cec-client -s | grep 'power status:')
     OUTPUT=""
 
-    if [ $STATUS = "power status: on" ]; then
+    if [[ $STATUS == *"on"* ]]; then
       OUTPUT="On"
     fi
 
-    if [ $STATUS = "power status: standby" ]; then
+    if [[ $STATUS == *"standby"* ]]; then
       OUTPUT="Off"
     fi
 
