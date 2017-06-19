@@ -42,14 +42,13 @@ cec_status &
 while read -r msg
 do
 
-  echo "$msg"
-  # case $msg in
-  # On)
-  #   cec_on &
-  #   ;;
-  # Off)
-  #   cec_off &
-  #   ;;
-  # esac
+  case $msg in
+  On)
+    cec_on &
+    ;;
+  Off)
+    cec_off &
+    ;;
+  esac
 
 done < <(mosquitto_sub -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$COMMAND_TOPIC" -q 1)
