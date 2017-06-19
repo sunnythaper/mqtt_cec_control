@@ -3,8 +3,8 @@ set -e
 
 MQTT_IP=xxx.xxx.xxx.xxx
 MQTT_PORT=1883
-MQTT_USER=username
-MQTT_PASSWORD=password
+MQTT_USER=user
+MQTT_PASSWORD=pass
 COMMAND_TOPIC=tv/living_room
 STATE_TOPIC=tv/living_room/state
 
@@ -19,18 +19,10 @@ cec_off() {
 cec_status() {
   while /bin/true; do
     STATUS=$(echo 'pow 0' | cec-client -s | grep 'power status:')
-    OUTPUT="Transitioning"
 
     echo "Status = $STATUS"
 
-    # if [[ $STATUS == *"on"* ]]; then
-    #   OUTPUT="On"
-    # fi
-    # if [[ $STATS == *"standby"* ]]; then
-    #   OUTPUT="Off"
-    # fi
-
-    # mosquitto_pub -r -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$STATE_TOPIC" -m "$OUTPUT" || true
+    mosquitto_pub -r -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$STATE_TOPIC" -m "$STATUS" || true
 
     sleep 5
   done
@@ -38,7 +30,7 @@ cec_status() {
 
 cec_status &
 
-while read -r message
+while read message
 do
 
   case $message in
