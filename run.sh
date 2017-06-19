@@ -19,10 +19,19 @@ cec_off() {
 cec_status() {
   while /bin/true; do
     STATUS=$(echo 'pow 0' | cec-client -s | grep 'power status:')
+    OUTPUT=""
 
-    echo "Status = $STATUS"
+    if [ $STATUS = "power status: on" ]; then
+      OUTPUT="On"
+    fi
 
-    mosquitto_pub -r -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$STATE_TOPIC" -m "$STATUS" || true
+    if [ $STATUS = "power status: standby" ]; then
+      OUTPUT="Off"
+    fi
+
+    if [ $OUTPUT ]; then
+      mosquitto_pub -r -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$STATE_TOPIC" -m "$OUTPUT" || true
+    fi
 
     sleep 5
   done
@@ -30,16 +39,17 @@ cec_status() {
 
 cec_status &
 
-while read message
+while read -r msg
 do
 
-  case $message in
-  On)
-    cec_on &
-    ;;
-  Off)
-    cec_off &
-    ;;
-  esac
+  echo "$msg"
+  # case $msg in
+  # On)
+  #   cec_on &
+  #   ;;
+  # Off)
+  #   cec_off &
+  #   ;;
+  # esac
 
 done < <(mosquitto_sub -h "$MQTT_IP" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASSWORD" -t "$COMMAND_TOPIC" -q 1)
